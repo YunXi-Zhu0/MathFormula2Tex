@@ -9,5 +9,8 @@ wheels/
 # Virtual environments
 .venv
 
+# idea
+.idea/
+
 # tests file
 tests/test_img
