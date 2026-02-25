@@ -16,9 +16,12 @@ TEST_IMG_DIR = TESTS_DIR / "test_img"
 IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png'}
 
 # 模型配置
-# qwen3-max
-QWEN3_MAX_MODEL = {
-    "MODEL_NAME": "qwen3-max",
-    "API_KEY": os.getenv("QWEN3_MAX_API_KEY"),
-    "BASE_URL": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+# qwen3.5-plus
+QWEN3P5_PLUS_MODEL = {
+    "MODEL_NAME": "qwen3.5-plus",
+    "API_KEY": os.getenv("QWEN3P5_PLUS_API_KEY"),
+    "BASE_URL": "https://dashscope.aliyuncs.com/api/v1"
 }
+
+# 系统提示词路径
+SYSTEM_PROMPT_PATH = ROOT_DIR / "src" / "llm" / "core" / "prompt" / "system_prompt.md"
