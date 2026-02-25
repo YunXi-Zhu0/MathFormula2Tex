@@ -1,3 +1,4 @@
+import asyncio
 from typing import List
 from pathlib import Path
 import dashscope
@@ -65,7 +66,6 @@ class Qwen3P5PlusLLM(BaseLLM):
 
 
 if __name__ == "__main__":
-    import asyncio
     from src.chapter.loader import load_chapters
     from src.core.config import TEST_IMG_DIR
     chapter = load_chapters(TEST_IMG_DIR)
