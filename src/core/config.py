@@ -12,6 +12,12 @@ ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 TESTS_DIR = ROOT_DIR / "tests"
 TEST_IMG_DIR = TESTS_DIR / "test_img"
 
+# 图片输入路径
+INPUT_IMG_DIR = ROOT_DIR / "input"
+
+# 输出 TeX 文件路径
+OUTPUT_TEX_PATH = ROOT_DIR / "output"
+
 # 用户图片的加载类型
 IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png'}
 
