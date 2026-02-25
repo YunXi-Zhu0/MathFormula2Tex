@@ -14,3 +14,7 @@ wheels/
 
 # tests file
 tests/test_img
+
+# input and output data
+input/
+output/
