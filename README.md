@@ -6,12 +6,14 @@
 
 ## 📚 目录
 
-- [项目简介](#项目简介)
-- [项目架构](#项目架构)
-- [工作流程](#工作流程)
-- [用户使用说明](#用户使用说明)
-- [用户自定义模型](#用户自定义模型)
-- [开发与测试](#开发与测试)
+- [✨ 项目简介](#-项目简介)
+- [👀 效果展示](#-效果展示)
+- [🧱 项目架构](#-项目架构)
+- [🔄 工作流程](#-工作流程)
+- [🚀 用户使用说明](#-用户使用说明)
+- [🧩 用户自定义模型](#-用户自定义模型)
+- [🧪 开发与测试](#-开发与测试)
+- [⚖️ 许可证与免责声明](#-许可证与免责声明)
 
 ---
 
@@ -23,12 +25,35 @@
 
 ---
 
+## 👀 效果展示
+### 1. 🖼️ 输入图片示例
+
+假设 `input/` 目录结构如下图所示：
+
+![001](assets/1.png)
+
+以 "1.累加法" 章节下的图片为示例：
+
+![002](assets/2.png)
+
+### 2. ⚙️ 程序执行流程
+![003](assets/3.png)
+
+### 3. 🧾 输出 LaTeX 示例
+![004](assets/4.png)
+
+**Tip**：输出的 LaTeX 片段会根据系统提示词中的规范进行排版。其中 `lfive`、`ltwo` 等是用户自定义的 LaTeX 宏，最终使用时需在提示词 `system_prompt.md` 中自行定义换行符，以控制题目间距等。
+
+### 4. 📄 基于输出 LaTeX 的编译效果
+![005](assets/5.png)
+
 ## 🧱 项目架构
 
 ```
 MathFormula2Tex/
 ├── src/
 │   ├── main.py                 # 程序入口，串联加载→调度→写入
+│   ├── cli.py                  # 可选：命令行参数解析（如输入输出路径、模型选择等）
 │   ├── core/
 │   │   └── config.py           # 路径、模型、提示词等配置
 │   ├── chapter/
@@ -48,6 +73,7 @@ MathFormula2Tex/
 │   └── system_prompt_parser.py  # 系统提示词解析（读入 .md）
 ├── input/                      # 用户图片输入（按章节分子目录）
 ├── output/                     # 生成的 .tex 输出
+├── assets/                     # 项目相关图片（仅用于 README 展示）
 ├── tests/
 │   └── test_img/               # 测试用图片（可选）
 ├── .env                        # 环境变量（API Key 等，不提交）
@@ -92,7 +118,10 @@ MathFormula2Tex/
 ### 环境要求
 
 - **Python**：>= 3.14（见 `pyproject.toml`）
-- **网络**：可访问阿里云 DashScope API（默认 `https://dashscope.aliyuncs.com/api/v1`）
+- **网络**：可访问阿里云 DashScope API\
+详情可参考阿里云官方文档：\
+  (1) [获取API Key](https://help.aliyun.com/zh/model-studio/get-api-key?spm=a2c4g.11186623.0.0.e4466f0bAxeEj3)\
+  (2) [使用QWEN3.5模型实现图像与视频理解](https://help.aliyun.com/zh/model-studio/vision?spm=a2c4g.11186623.0.0.6448757ewWBduA#2a1d3f0cb9n4f)
 
 ### 安装
 
@@ -115,8 +144,10 @@ uv sync
 
    `config.py` 通过 `os.getenv("QWEN3P5_PLUS_API_KEY")` 读取；若使用其它变量名，需同步修改 `config.py` 中的 `QWEN3P5_PLUS_MODEL["API_KEY"]`。
 
-2. **输入目录结构**  
-   在 `input/` 下按「一章一个子目录」放置图片，子目录名会作为该章标题传给 LLM 并用于生成 `\section*{...}`：
+
+### I. 通过 main.py 运行
+1. **输入目录结构**  
+   在项目根目录下手动创建 `input/` 文件夹，并在其下方按「一章一个子目录」放置图片，子目录名会作为该章标题传给 LLM 并用于生成 `\section*{...}`：
 
    ```
    input/
@@ -132,10 +163,8 @@ uv sync
 
    支持的图片格式：`.jpg`、`.jpeg`、`.png`（由 `config.IMAGE_EXTENSIONS` 控制）。
 
-3. **输出目录**  
+2. **输出目录**  
    默认输出目录为 `output/`，可在 `main.py` 中通过 `OUTPUT_TEX_PATH` 修改；`ChapterWriter` 会自动创建目录。
-
-### 运行
 
 在项目根目录执行：
 
@@ -143,18 +172,15 @@ uv sync
 python -m src.main
 ```
 
-或：
-
-```bash
-python src/main.py
-```
-
 运行后将在控制台看到各章节处理进度与成败，生成的 LaTeX 文件路径为：`output/AllChapters.tex`。
 
-### 修改输出文件名
+### II. 通过 cli.py 运行（可选）
 
-在 `src/main.py` 中调整 `ChapterWriter.write_tex(..., file_name="AllChapters.tex")` 的 `file_name` 参数即可。
-
+``` bash
+python -m src.cli -i your_input_dir -o your_output_dir 
+```
+- `-i/--input`：输入图片根目录，默认 `input/`
+- `-o/--output`：输出 .tex 文件路径，默认 `output/`
 ---
 
 ## 🧩 用户自定义模型
@@ -222,14 +248,17 @@ class BaseLLM(ABC):
 
 ## 🧪 开发与测试
 
-- **依赖管理**：`pyproject.toml`（`requires-python = ">=3.14"`，依赖 `dashscope`、`python-dotenv`、`pytest`）。注意：代码中通过 `dotenv` 加载 `.env`，包名一般为 `python-dotenv`，若安装失败请用 `pip install python-dotenv`。
-- **测试**：`tests/test_img` 可作为测试图片目录（见 `chapter/loader.py` 与 `chapter_dispatcher.py` 的 `if __name__ == "__main__"`）；可配置 `TEST_IMG_DIR` 指向 `tests/test_img`，单独运行各模块进行调试。
-- **忽略**：`.gitignore` 已忽略 `input/`、`output/`、`.env`、`.venv`、`tests/test_img` 等，避免将本地数据与密钥提交。
+- **依赖管理**：`pyproject.toml`（`requires-python = ">=3.14"`，依赖 `dashscope`、`python-dotenv`、`pytest`）。\
+注意：代码中通过 `dotenv` 加载 `.env`，包名一般为 `python-dotenv`，若安装失败请用 `pip install python-dotenv`。
+- **测试**：`tests/test_img` 可作为测试图片目录（见 `chapter/loader.py` 与 `chapter_dispatcher.py` 的 `if __name__ == "__main__"`）\
+可配置 `TEST_IMG_DIR` 指向 `tests/test_img`，单独运行各模块进行调试。
+- **忽略**：`.gitignore`\
+已忽略 `input/`、`output/`、`.env`、`.venv`、`tests/test_img` 等，避免将本地数据与密钥提交。
 
 ---
 
 ## ⚖️ 许可证与免责声明
 
-(1) 本项目仅供学习与内部使用\
+(1) 本项目采用 MIT License，允许个人和商业使用、修改、分发，但不提供任何形式的保证或责任。\
 (2) 使用通义千问等第三方 API 时请遵守对应服务条款与计费规则\
 (3) 生成的 LaTeX 请自行校对后再用于正式排版
