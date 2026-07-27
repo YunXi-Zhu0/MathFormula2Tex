@@ -59,7 +59,7 @@ class Qwen3P5PlusLLM(BaseLLM):
                 model=QWEN3P5_PLUS_MODEL['MODEL_NAME'],
                 messages=messages
             ),
-            timeout=150
+            timeout=900
         )
 
         return response.output.choices[0].message.content[0]["text"]
@@ -69,7 +69,7 @@ if __name__ == "__main__":
     from src.chapter.loader import load_chapters
     from src.core.config import TEST_IMG_DIR
     chapter = load_chapters(TEST_IMG_DIR)
-    title, image_paths = chapter[1].title, chapter[1].images
+    title, image_paths = chapter[0].title, chapter[0].images
 
     async def main():
         llm = Qwen3P5PlusLLM()
